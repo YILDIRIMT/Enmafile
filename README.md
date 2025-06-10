@@ -4,7 +4,9 @@ Make-like build system and DSLanguage
 
 ### Install System
 
-'git clone https://github.com/YILDIRIMT/Enmafile && cd Enmafile && sudo bash install.sh'
+```bash
+git clone https://github.com/YILDIRIMT/Enmafile && cd Enmafile && sudo bash install.sh
+```
 
 ## License
 
