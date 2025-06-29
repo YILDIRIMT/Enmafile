@@ -1,5 +1,6 @@
 #include <fstream>
 #include <filesystem>
+#include <unistd.h>
 #include <iostream>
 #include <stdio.h>
 #include <vector>
@@ -18,17 +19,20 @@ struct ccodes {
 struct var_struct {
 	std::vector<std::string> var_name;
 	std::vector<std::string> var_value;
-	bool sys_controller = false;
+};
+
+struct controllers {
+	bool sys_controller    = false;
 	bool target_controller = false;
-}; 
+};
 
 //==
 
 static void set_ter_color(ccodes& color_ref) {
-	color_ref.color_execute_s = "";
-	color_ref.color_execute_e = "";
+	color_ref.color_execute_s   = "";
+	color_ref.color_execute_e   = "";
 	std::string color_warning_s = "";
 	std::string color_warning_e = "";
-	color_ref.color_error_s   = "";
-	color_ref.color_error_f   = "";
+	color_ref.color_error_s     = "";
+	color_ref.color_error_f     = "";
 }

@@ -1,8 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-class parsers {
-public:
+namespace parsers {
 	std::string line_parser
 	(const std::string& line, std::string pars_symbol_start, std::string pars_symbol_end, int to_parse);
 	bool var_def_parser(std::string read_line, int line_counter);
@@ -15,6 +14,6 @@ public:
 	bool handle_condition_parser(bool condition_controller, std::string& read_line, int line_counter);
 	
 	void main_parser(const std::string& file_path, const std::string& argument);	
-};
+}
 
 #endif

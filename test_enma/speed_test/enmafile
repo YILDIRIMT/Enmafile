@@ -10,7 +10,7 @@
 !read = s>cat read<s
 !read2 = ^read^
 
-ifeq-> ^read^ ^read2^
+elif-> ^read^ ^read2^
 	!compiler = !!
 else->
 	!compiler = ^compiler^

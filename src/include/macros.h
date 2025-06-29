@@ -1,9 +1,24 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-//VER
-#define VERSION     "v0.0.1"
-#define VERSION_OUT "enma version\n"
+//VERSION
+#define VERSION               "v0.0.9"
+
+/* === ENMA ARGS === */
+#define VERSION_ARG_KEY       "-v"
+#define PATH_OPTION_ARG_KEY   "-p"
+#define SILENCE_ARG_KEY       "-s"
+#define SILENCE_URSLT_ARG_KEY "-sur"
+#define HELP_ARG_KEY          "-h"
+
+#define VERSION_OUT           "enma version\n"
+#define HELP_OUT              "Useage: enma [options]\n" \
+							  "Options:\n" \
+							  "-p          Change directory and run.\n" \
+							  "-s          Don't echo recipes.\n" \
+							  "-sur        Don't echo unexpected results.\n"\
+							  "-v          Print version and exit.\n" \
+							  "-h          Print this message and exit.\n"
 
 /* === GENERIC KEYS === */
 #define FILE_READ_KEY     "enmafile"
@@ -15,6 +30,10 @@
 #define COMMENT_KEY       "#"
 #define DIRECTIVE_KEY     "\t"
 #define AC_CON_KEY        "\t"
+
+/* === TOOL KEYS === */
+#define SYS_VAR_START     "s>"
+#define SYS_VAR_END       "<s"
 #define DEP_KEY           "deps->"
 #define SILENCE_KEY       "@"
 
@@ -23,11 +42,10 @@
 #define UP_TO_DATE_1      " is up to date]"
 
 /* === LOGICAL KEYS === */
-#define IF_KEY     "if->"
-#define IFEQ_KEY   "ifeq->"
-#define ELSE_KEY   "else->"
-
-#define DEF_KEY    "def->"
+#define IF_KEY            "if->"
+#define ELIF_KEY          "elif->"
+#define ELSE_KEY          "else->"
+#define DEF_KEY           "def->"
 			
 /* === ERROR MACROS === */
 #define ERROR_FILE_NOT_EXISTS   "ec000"
@@ -47,6 +65,9 @@
 
 #define ERROR_DEPS_NOT_EXISTS   "ec03"
 #define EC03                    "One or more missing"
+
+#define ERROR_PATH_O_NOT_EXISTS "ec04"
+#define EC04                    "Directory not exists"
 
 #define ERROR_0                 "LINE -> "
 #define ERROR_1                 " ERROR; "

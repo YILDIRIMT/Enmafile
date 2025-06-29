@@ -1,0 +1,16 @@
+!COMPILER = g++
+!LIBS = include/
+!SRC = main.cpp parser.cpp utils.cpp run.cpp
+!TARGET = bin/enma
+
+enma
+	^COMPILER^ ^SRC^ -I^LIBS^ -o ^TARGET^
+
+make_nt
+	x86_64-w64-mingw32-g++ ^SRC^ -I^LIBS^ -o ^TARGET^
+
+clear
+	rm -rf ^TARGET^
+
+install
+	sudo mv ^TARGET^ /bin
