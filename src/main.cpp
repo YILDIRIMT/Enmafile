@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
 		}
 
 		//* -p change directory argument control
-		if(argument == "-p") {
+		if(argument == PATH_OPTION_ARG_KEY) {
 			file_path = argv[arg_control_counter + 2];
 
 			if(!(std::filesystem::exists(file_path))) {
