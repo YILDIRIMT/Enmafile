@@ -141,7 +141,7 @@ namespace parsers {
 			else 
 				var_def_parser(str_utils::ltrim(read_line), line_counter);
 				
-	    	return true;
+	    		return true;
 	    } return false;
 	}
 	
