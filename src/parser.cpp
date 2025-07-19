@@ -17,7 +17,7 @@ namespace parsers {
 	std::string line_parser(const std::string& line, std::string pars_symbol_start, std::string pars_sybol_end, int to_parse) {
 	    size_t pos = line.find(pars_symbol_start);
 	    if(pos == std::string::npos) 
-	    	{return line;}
+	    	return line;
 	
 	    std::string temp = line.substr(0, pos);
 	    std::string temp_parameter;
@@ -25,7 +25,7 @@ namespace parsers {
 	    while(pos != std::string::npos) {
 	        size_t pose = line.find(pars_sybol_end, pos + pars_symbol_start.size());
 	        if(pose == std::string::npos) 
-	        	{break;}
+	        	break;
 	
 	        temp_parameter = line.substr(pos + pars_symbol_start.size(), pose - pos - pars_symbol_start.size());
 	
@@ -33,14 +33,15 @@ namespace parsers {
 	            // to_parse = 0 -> var parsing
 	            int tfi = str_utils::find_index(var_struct_ref_parser.var_name, temp_parameter);
 	            if (tfi == -1) 
-	            	{return ERROR_VAR_NOT_EXISTS + temp_parameter;}
+	            	return ERROR_VAR_NOT_EXISTS + temp_parameter;
 	            else 
-	            	{temp += var_struct_ref_parser.var_value[tfi];}
-	        } else 
-	        	{temp += run::execute_command_and_return(temp_parameter.c_str());} // to_parse != 0 -> system command parsing
-	        
+	            	temp += var_struct_ref_parser.var_value[tfi];
+	        } else {
+	        	// to_parse != 0 -> system command parsing
+	        	temp += run::execute_command_and_return(temp_parameter.c_str());
+	        }
+	        	
 	        pos = line.find(pars_symbol_start, pose + pars_sybol_end.size());
-	
 	        if(pos == std::string::npos) {
 	            temp += line.substr(pose + pars_sybol_end.size()); // add the rest
 	            break;
@@ -52,19 +53,19 @@ namespace parsers {
 	
 	bool var_def_parser(std::string read_line, int line_counter) {
 		if(read_line.substr(0,1) == VAR_KEY) {
-			if(run::error_control(enma_utils::find_var_name(read_line.substr(1,read_line.length()), ASSIGNMENT_KEY), line_counter)) 
-				{return false;}
-			else if(run::error_control(enma_utils::find_var_value(read_line, ASSIGNMENT_KEY), line_counter)) 
-				{return false;}
-			else {
+			if(run::error_control(enma_utils::find_var_name(read_line.substr(1,read_line.length()), ASSIGNMENT_KEY), line_counter)) {
+				return false;
+			} else if(run::error_control(enma_utils::find_var_value(read_line, ASSIGNMENT_KEY), line_counter)) {
+				return false;
+			} else {
 				std::string temp_var_name = enma_utils::find_var_name(read_line.substr(1,read_line.length()), ASSIGNMENT_KEY);
 				std::string temp_var_value = enma_utils::find_var_value(read_line, ASSIGNMENT_KEY);
 				
 				//change var value
 				int tfi = str_utils::find_index(var_struct_ref_parser.var_name, temp_var_name);
-				if(tfi != -1) 
-					{var_struct_ref_parser.var_value[tfi] = temp_var_value;}
-				else {
+				if(tfi != -1)  {
+					var_struct_ref_parser.var_value[tfi] = temp_var_value;
+				} else {
 					//create new var
 					var_struct_ref_parser.var_name.push_back(temp_var_name);
 					var_struct_ref_parser.var_value.push_back(temp_var_value);
@@ -85,15 +86,15 @@ namespace parsers {
 			bool ref_ccparser = condition_control_parser(str_utils::ltrim(condition_data_ltrimmed.substr(def_key_ref.length(), condition_data_ltrimmed.length() - def_key_ref.length())), eq_state, 2);
 					
 			if(condition_data_ltrimmed.substr(0, def_key_ref.length()) == DEF_KEY && ref_ccparser) 
-				{return 1;}
+				return 1;
 			else if(condition_data_ltrimmed.substr(0, def_key_ref.length()) == DEF_KEY && !ref_ccparser) 
-				{return 0;}
+				return 0;
 		
 			// condition check for match *trigger
 			if (condition_control_parser(condition_data, eq_state, 1)) 
-				{return 1;}
+				return 1;
 			else 
-				{return 0;}
+				return 0;
 		} return -1;
 	}
 	
@@ -108,43 +109,46 @@ namespace parsers {
 			while(isdata >> temp) {
 				if(first_run && temp != is_temp) {
 					if(eq) 
-						{return true;}
+						return true;
 					else 
-						{return false;}
+						return false;
 				}
+				
 				first_run = true;
 				is_temp = temp;
 			} 
+			
 			if(eq) 
-				{return false;} 
+				return false;
 			else 
-				{return true;} 			
+				return true;
 		} else {
 			// condition check for (def->) - var control   
 			int find_index_ref = str_utils::find_index(var_struct_ref_parser.var_name, data);
 			if(find_index_ref != -1 && !eq) 
-				{return true;}
+				return true;
 			else if(find_index_ref == -1 && eq) 
-				{return true;}
+				return true;
 			else 
-				{return false;}
+				return false;
 		} return false;
 	}
 	
 	bool handle_condition_parser(bool condition_controller, std::string& read_line, int line_counter) {
 		if(condition_controller == true) {
 			if(read_line.substr(0,1) != AC_CON_KEY) 
-				{return false;}
+				return false;
 			else 
-				{var_def_parser(str_utils::ltrim(read_line), line_counter);} 
+				var_def_parser(str_utils::ltrim(read_line), line_counter);
+				
 	    	return true;
 	    } return false;
 	}
 	
 	int deps_parser(const std::string& target, const std::string& deps) {
-		if(!std::filesystem::exists(target)) 
-			{return -1;}
-		else {
+		if(!std::filesystem::exists(target)) {
+			return -1;
+		} else {
 			// get target modify data
 			auto target_time = std::filesystem::last_write_time(target);
 			std::istringstream isdata(deps);
@@ -153,10 +157,10 @@ namespace parsers {
 			// deps date and exsists control
 			while(isdata >> deps_temp) {
 				if(!std::filesystem::exists(deps_temp)) 
-					{return -2;}
+					return -2;
 				// if deps newer then target 
 				if(target_time < std::filesystem::last_write_time(deps_temp)) 
-					{return 0;}
+					return 0;
 			} return -3;
 		}
 	}
@@ -195,19 +199,19 @@ namespace parsers {
 				run::error_control(ERROR_VAR_NOT_EXISTS, line_counter, read_line.substr(var_not_exists_error.length(), read_line.length() - var_not_exists_error.length()));
 				controllers_set_true();
 				break;
-			} else 
-				{read_line = line_parser(read_line, "s>", "<s", 1);}
-			
+			} else {
+				read_line = line_parser(read_line, "s>", "<s", 1);
+			}
+				
 			// === comment line control ===
 			if(read_line.substr(0,1) == COMMENT_KEY) 
-				{continue;}
+				continue;
 			
 			// === set dep and parsing read_line ===
 	 		key_control = str_utils::find_key_index(read_line, DEP_KEY);
 			if(key_control != -1) {
 				// get deps
 				deps = read_line.substr(key_control + 6, read_line.length() - key_control + 1);
-				
 				// depless line
 				read_line = str_utils::trim(read_line.substr(0, key_control));
 			}
@@ -247,15 +251,16 @@ namespace parsers {
 				// condition is false
 				condition_false_control = true;
 				continue;
-			} else 
-				{(void)0;}
+			} else {
+				(void)0;
+			}
 						
 			// run in "if"
 			handle_condition_parser_result = handle_condition_parser(condition_controller, read_line, line_counter);		
 		    if(!handle_condition_parser_result) 
-		    	{condition_controller = handle_condition_parser_result;}
+		    	condition_controller = handle_condition_parser_result;
 			else 
-				{continue;}
+				continue;
 			
 			// === control for "elif" condition ===
 			key_control = str_utils::find_key_index(read_line, ELIF_KEY);
@@ -270,15 +275,16 @@ namespace parsers {
 				// condition is false
 				condition_false_control = true;
 				continue;
-			} else 
-				{(void)0;}
+			} else {
+				(void)0;
+			}
 	
 			// run in "ELIF" 
 			handle_condition_parser_result = handle_condition_parser(condition_controller, read_line, line_counter);
 			if(!handle_condition_parser_result) 
-				{condition_controller = handle_condition_parser_result;}
+				condition_controller = handle_condition_parser_result;
 			else 
-				{continue;}
+				continue;
 	
 			// === detect and run in "else" ===
 			if(str_utils::rtrim(read_line) == ELSE_KEY) {
@@ -289,11 +295,12 @@ namespace parsers {
 				if(!handle_condition_parser_result) {
 					condition_false_control = handle_condition_parser_result;
 					condition_else_detect = false;
-				} else 
-					{continue;} 
-				condition_else_detect = false;
-			} else 
-				{(void)0;}
+				} else {
+					continue;
+				} condition_else_detect = false;
+			} else {
+				(void)0;
+			}
 			
 			// === process and execute on directive ===
 			if(directive_controller == true) {
@@ -301,25 +308,24 @@ namespace parsers {
 				if(str_utils::trim(read_line.substr(0,2)) == SILENCE_KEY) {
 					read_line = DIRECTIVE_KEY + read_line.substr(2, read_line.length() - 1);
 					silence_control = true;
-				} else 
-					{(void)0;}
+				}
 									
 				controllers_ref_parser.target_controller = true;
 				if(read_line.substr(0,1) != DIRECTIVE_KEY) 
-					{directive_controller = false;}
+					directive_controller = false;
 				else 
-					{run::execute_directive(read_line, silence_control);}
+					run::execute_directive(read_line, silence_control);
 			} 
 
 			if(str_utils::trim(read_line) == argument) 
-				{directive_controller = true;}
+				directive_controller = true;
 			
 			// === register variables on memory(vectors) ===
 			if(!var_def_parser(read_line,line_counter)) 
-				{break;}
+				break;
 			
 		} 
 		if(controllers_ref_parser.target_controller == false) 
-			{run::error_control(ERROR_TARGET_NOT_EXISTS, 0);}
+			run::error_control(ERROR_TARGET_NOT_EXISTS, 0);
 	}
 }

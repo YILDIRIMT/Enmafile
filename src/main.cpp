@@ -14,9 +14,9 @@ int main(int argc, char* argv[]) {
 	std::string file_path;
 	
 	if(argc < 2) 
-		{argument = DEFAULT_ARG;}
+		argument = DEFAULT_ARG;
 	else 
-		{argument = argv[1];}
+		argument = argv[1];
 
 	// argument control ---
 	int arg_control_counter = 0;
@@ -36,19 +36,19 @@ int main(int argc, char* argv[]) {
 		//* -s silence argument control
 		if(argument == SILENCE_ARG_KEY) {
 			silence_arg_control = true;
-			if(argc < 3) 
-				{argument = DEFAULT_ARG;}
+			if(argc < 3)
+				argument = DEFAULT_ARG;
 			else 
-				{argument = argv[arg_control_counter + 1];}
+				argument = argv[arg_control_counter + 1];
 		}
 
 		//* -sur silence unexpected results argument control
 		if(argument == SILENCE_URSLT_ARG_KEY) {
 			silence_urslt_arg_control = true;
 			if(argc < 3) 
-				{argument = DEFAULT_ARG;}
+				argument = DEFAULT_ARG;
 			else 
-				{argument = argv[arg_control_counter + 1];}
+				argument = argv[arg_control_counter + 1];
 		}
 
 		//* -p change directory argument control
@@ -63,21 +63,22 @@ int main(int argc, char* argv[]) {
 			std::filesystem::current_path(std::filesystem::current_path() / file_path);
 			
 			if(argv[argc - 1] != file_path) 
-				{argument = argv[argc - 1];}
+				argument = argv[argc - 1];
 			else
-				{argument = DEFAULT_ARG;}
+				argument = DEFAULT_ARG;
 			
 			file_path = FILE_READ_KEY;			
 			break;
 		}
 			
 		if(arg_control_counter > argc) 
-			{break;} arg_control_counter++;
+			break; 
+			
+		arg_control_counter++;
 	}
 	
 	/* ======= SET SYSTEM AND RUN PARSING ======= */
 	if(std::filesystem::exists(file_path) && !(std::filesystem::is_directory(file_path))) {
-		
 		#ifdef _WIN32
 			set_ter_color(color_codes);
 		#else
@@ -88,7 +89,9 @@ int main(int argc, char* argv[]) {
 		parsers::main_parser(file_path, argument);
 				
 		if(controllers_ref.sys_controller == false) 
-			{return 1;} return 0;
+			return 1;
+
+		return 0;
 	} else {
 		run::error_control(ERROR_FILE_NOT_EXISTS, 0);
 		return 1;
