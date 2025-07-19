@@ -158,6 +158,7 @@ namespace parsers {
 			while(isdata >> deps_temp) {
 				if(!std::filesystem::exists(deps_temp)) 
 					return -2;
+				
 				// if deps newer then target 
 				if(target_time < std::filesystem::last_write_time(deps_temp)) 
 					return 0;
@@ -258,7 +259,7 @@ namespace parsers {
 			// run in "if"
 			handle_condition_parser_result = handle_condition_parser(condition_controller, read_line, line_counter);		
 		    if(!handle_condition_parser_result) 
-		    	condition_controller = handle_condition_parser_result;
+		    		condition_controller = handle_condition_parser_result;
 			else 
 				continue;
 			
